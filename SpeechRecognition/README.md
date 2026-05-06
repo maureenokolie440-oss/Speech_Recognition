@@ -1,201 +1,348 @@
 # Speech Recognition (CSC 309 Demo)
 
-A FastAPI-based web application for real-time speech-to-text transcription using OpenAI's Whisper model. Record audio directly from your browser or upload audio files to get instant transcriptions.
+This project is a browser-based speech-to-text demo built with FastAPI, OpenAI Whisper, and a simple HTML frontend. It allows a user to either record audio directly in the browser or upload an audio file, send that audio to a Python backend, and receive a transcription result. The project also includes MFCC feature extraction for audio analysis and academic explanation.
+
+## Overview
+
+The application provides two main capabilities:
+
+- Speech transcription using Whisper
+- Audio feature extraction using MFCCs
+
+The backend is implemented in FastAPI and serves both the API and the browser frontend. The frontend uses browser audio APIs to record from the microphone, submit audio to the backend, and display the resulting transcript.
 
 ## Features
 
-- 🎤 **Real-time Recording** — Record audio directly in the browser
-- 📁 **File Upload** — Support for all audio formats (WAV, MP3, OGG, WEBM, etc.)
-- 🤖 **Whisper AI** — Powered by OpenAI's Whisper tiny model for fast transcription
-- 🎨 **Modern UI** — Clean, responsive web interface with real-time feedback
-- 📊 **Audio Features** — Extract MFCC (Mel-Frequency Cepstral Coefficients) for audio analysis
+- Browser-based microphone recording
+- Audio file upload for transcription
+- Speech-to-text transcription with Whisper
+- MFCC feature extraction endpoint
+- FastAPI Swagger documentation
+- Simple UI for live demo use
+- Windows-friendly FFmpeg support in the backend
 
 ## Tech Stack
 
-- **Backend**: FastAPI (Python)
-- **Frontend**: HTML5, CSS3, JavaScript (vanilla)
-- **ML Model**: OpenAI Whisper (tiny model for speed)
-- **Audio Processing**: librosa, sounddevice
-- **Server**: Uvicorn
+- Python
+- FastAPI
+- Uvicorn
+- OpenAI Whisper
+- Librosa
+- SoundDevice
+- HTML
+- CSS
+- JavaScript
+- FFmpeg
+
+## Project Structure
+
+```text
+SpeechRecognition/
+├── app.py
+├── README.md
+├── requirements.txt
+├── speech_recognition_project_plan.md
+├── audio/
+│   └── record_audio.py
+├── frontend/
+│   └── index.html
+├── model/
+│   └── whisper_model.py
+└── utils/
+    └── feature_extraction.py
+```
+
+## File Guide
+
+- `app.py`: Main FastAPI application. Defines routes, serves static files, stores uploads, and returns transcription or MFCC results.
+- `frontend/index.html`: Browser UI for recording audio, uploading files, and showing results.
+- `model/whisper_model.py`: Loads the Whisper model and performs audio transcription.
+- `utils/feature_extraction.py`: Extracts MFCC audio features.
+- `audio/record_audio.py`: Small script for recording sample audio directly from Python.
+- `requirements.txt`: Python packages needed to run the project.
 
 ## Requirements
 
-- Python 3.8+
-- FFmpeg (for audio decoding)
-- Dependencies listed in `requirements.txt`
+Before running the project, make sure you have:
+
+- Python 3.8 or newer
+- FFmpeg installed
+- Internet access on first model download if Whisper has not yet been cached locally
 
 ## Installation
 
-### 1. Clone the Repository
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/maureenokolie440-oss/Speech_Recognition.git
-cd Speech_Recognition
+cd SpeechRecognition
 ```
 
-### 2. Install FFmpeg
+### 2. Create a virtual environment
 
-**Windows (using Winget):**
-```bash
-winget install --id Gyan.FFmpeg -e
-```
+Windows PowerShell:
 
-**macOS (using Homebrew):**
-```bash
-brew install ffmpeg
-```
-
-**Ubuntu/Debian:**
-```bash
-sudo apt-get install ffmpeg
-```
-
-### 3. Create Virtual Environment
-
-```bash
+```powershell
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+.\venv\Scripts\Activate.ps1
 ```
 
-### 4. Install Python Dependencies
+macOS/Linux:
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
+### 4. Install FFmpeg
+
+Whisper depends on FFmpeg to decode audio files.
+
+Windows with Winget:
+
+```powershell
+winget install --id Gyan.FFmpeg -e --accept-source-agreements --accept-package-agreements
+```
+
+macOS with Homebrew:
+
+```bash
+brew install ffmpeg
+```
+
+Ubuntu/Debian:
+
+```bash
+sudo apt update
+sudo apt install ffmpeg
+```
+
+Verify the installation:
+
+```bash
+ffmpeg -version
+```
+
 ## Running the Application
 
-Start the development server:
+Run the backend server:
+
+```bash
+python -m uvicorn app:app --host 127.0.0.1 --port 8000
+```
+
+For development with auto-reload:
 
 ```bash
 python -m uvicorn app:app --reload --host 127.0.0.1 --port 8000
 ```
 
-The server will start at `http://127.0.0.1:8000`
+After startup, open:
 
-### Access the Demo UI
+- Frontend UI: `http://127.0.0.1:8000/frontend/index.html`
+- Swagger docs: `http://127.0.0.1:8000/docs`
+- Root endpoint: `http://127.0.0.1:8000/`
 
-Open your browser and navigate to:
-```
-http://127.0.0.1:8000/frontend/index.html
-```
+## How to Use the Demo
 
-### API Documentation
+### Record from the browser
 
-Interactive Swagger API docs available at:
-```
-http://127.0.0.1:8000/docs
-```
+1. Open the frontend page.
+2. Click `Record`.
+3. Allow microphone access if prompted.
+4. Speak clearly.
+5. Click `Stop`.
+6. Click `Transcribe` if the browser does not auto-submit.
+7. Wait for the transcript to appear.
 
-## Project Structure
+### Upload an audio file
 
-```
-Speech_Recognition/
-├── app.py                      # FastAPI application with ffmpeg path configuration
-├── frontend/
-│   └── index.html             # Web UI with recording and upload
-├── model/
-│   └── whisper_model.py       # Whisper transcription model
-├── utils/
-│   └── feature_extraction.py  # Audio MFCC feature extraction
-├── audio/                      # Uploaded/recorded audio files directory
-├── requirements.txt           # Python dependencies
-├── .gitignore                 # Git ignore file
-└── README.md                  # This file
-```
+1. Open the frontend page.
+2. Click `Choose file`.
+3. Select an audio file such as `.wav`, `.mp3`, `.ogg`, `.m4a`, or `.webm`.
+4. Click `Transcribe`.
+5. Wait for the returned transcript.
 
 ## API Endpoints
 
-### Transcribe Audio File
+### `GET /`
 
-**POST** `/transcribe/`
+Returns a welcome message.
 
-Upload an audio file and get a text transcript.
+Example response:
 
-**Request:**
-- `file`: Audio file (any format supported by ffmpeg)
-
-**Response:**
 ```json
 {
-  "transcript": "Okay, so this is a test demo of the speech recognition for CS309 demo."
+  "message": "Welcome to the CSC 309 Speech Recognition API. Use /transcribe/ or /extract-features/ endpoints."
 }
 ```
 
-### Extract Audio Features
+### `POST /transcribe/`
 
-**POST** `/extract-features/`
+Uploads an audio file and returns a transcription.
 
-Extract MFCC features from an audio file for analysis.
+Form field:
 
-**Request:**
-- `file`: Audio file
+- `file`: audio file
 
-**Response:**
+Successful response:
+
 ```json
 {
-  "mfcc": [[...], [...], ...]
+  "transcript": "This is a sample transcription."
 }
 ```
 
-## How It Works
+Error response example:
 
-1. **Recording**: Use the browser's Web Audio API to capture microphone input
-2. **Upload**: Send audio to the FastAPI backend as multipart form data
-3. **Processing**: FFmpeg decodes the audio file
-4. **Transcription**: Whisper model converts audio to text
-5. **Response**: Transcribed text is displayed in the browser
+```json
+{
+  "error": "Detailed backend error message"
+}
+```
 
-## Performance Notes
+### `POST /extract-features/`
 
-- **First Run**: Whisper model downloads on first use (~1.4 GB for tiny model)
-- **Processing Time**: 5-15 seconds per minute of audio depending on hardware
-- **Model**: Using the "tiny" model for speed. Switch to "base" in `model/whisper_model.py` for better accuracy
+Uploads an audio file and returns MFCC features.
+
+Form field:
+
+- `file`: audio file
+
+Response shape:
+
+```json
+{
+  "mfcc": [[1.23, 4.56], [7.89, 0.12]]
+}
+```
+
+## How the Pipeline Works
+
+1. The user records or uploads audio from the browser.
+2. The frontend sends the file to the backend.
+3. The backend stores the uploaded file in the `audio` folder.
+4. Whisper processes the file and generates a transcript.
+5. The API returns JSON to the frontend.
+6. The frontend displays the transcript in the browser.
+
+## Whisper Model Notes
+
+The current implementation uses Whisper `tiny` for speed. This is a practical choice for classroom demos and low-resource systems, but it is less accurate than larger models.
+
+If you want better accuracy, update the model loader in `model/whisper_model.py` from:
+
+```python
+model = whisper.load_model("tiny")
+```
+
+to a larger model such as:
+
+```python
+model = whisper.load_model("base")
+```
+
+## Recording Audio with Python
+
+The repo includes a standalone recording script:
+
+```bash
+python audio/record_audio.py
+```
+
+This script:
+
+- records for 5 seconds
+- uses a 16 kHz sample rate
+- saves output as `sample.wav`
+
+You can upload that recorded file through the frontend afterward.
 
 ## Troubleshooting
 
-### "Error during transcription"
+### `Error during transcription`
 
-**Cause**: FFmpeg not found or audio decoding failed  
-**Solution**: Ensure FFmpeg is installed and on your PATH. Verify with: `ffmpeg -version`
+Possible causes:
 
-### Browser can't access microphone
+- FFmpeg is not installed
+- FFmpeg is not available in the running shell
+- the uploaded file is invalid or corrupted
 
-**Cause**: Microphone permission not granted  
-**Solution**: Check browser permission settings. HTTPS is required for secure contexts (localhost works fine locally).
+Check FFmpeg:
 
-### Model download takes too long
+```bash
+ffmpeg -version
+```
 
-**Cause**: Large model file download  
-**Solution**: The model is cached after first download. Subsequent transcriptions will be faster.
+If FFmpeg is installed but not found, restart the terminal and server.
 
-## Academic Notes (CSC 309)
+### Microphone recording does not work
 
-- MFCC extraction included via the `/extract-features/` endpoint for signal processing analysis
-- Whisper model demonstrates state-of-the-art speech recognition using transformers
-- Project covers full ML pipeline: data collection → processing → inference
+Possible causes:
+
+- microphone permission denied
+- wrong recording device selected
+- browser restriction or blocked permission
+
+Fixes:
+
+- allow microphone access in the browser
+- reload the page after granting permission
+- test using `127.0.0.1` or `localhost`
+
+### First transcription is slow
+
+This is normal when Whisper is downloading or initializing the model for the first time.
+
+### Port 8000 is already in use
+
+If Uvicorn reports that port `8000` is busy, stop the existing process or use another port.
+
+Example:
+
+```bash
+python -m uvicorn app:app --host 127.0.0.1 --port 8001
+```
+
+### Transcript text overflows the UI
+
+The frontend has been updated to wrap long transcript text and allow scrolling inside the transcript box.
+
+## Academic Relevance
+
+This project is appropriate for coursework or live presentation in AI and speech processing because it demonstrates:
+
+- transformer-based speech recognition
+- audio preprocessing and file upload
+- MFCC extraction for signal-feature analysis
+- a full-stack workflow from user input to ML inference output
+
+## Limitations
+
+- The `tiny` model favors speed over accuracy.
+- Very noisy recordings may produce weak results.
+- Longer recordings take more time to process.
+- Uploaded files are stored locally in the `audio` directory.
 
 ## Future Improvements
 
-- [ ] Support for batch file processing
-- [ ] Multiple language support
-- [ ] Speaker diarization
-- [ ] Real-time streaming transcription
-- [ ] Database to store transcription history
-- [ ] User authentication and usage tracking
+- Add language selection
+- Add support for longer streaming sessions
+- Save transcript history in a database
+- Add transcript export
+- Add speaker separation
+- Add authentication and user history
 
 ## License
 
-Educational project for CSC 309 course.
+This project is intended for educational use.
 
 ## Author
 
-Created for CSC 309 (Artificial Intelligence) course demonstration.
-
----
-
-**Questions or Issues?** Feel free to open an issue on GitHub!
-
----
-
-**Prepared for CSC 309 – Artificial Intelligence**
+Prepared as a CSC 309 speech recognition demonstration project.

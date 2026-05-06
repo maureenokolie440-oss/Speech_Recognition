@@ -1,0 +1,123 @@
+{\rtf1\ansi\deff0
+{\fonttbl{\f0 Calibri;}{\f1 Times New Roman;}}
+\paperw12240\paperh15840\margl1440\margr1440\margt1440\margb1440
+\fs24
+\pard\qc\b\f0 CSC 309 Mini Project Report\par
+\pard\qc\b0\f0 Speech Recognition Web Application Using FastAPI and Whisper\par
+\pard\qc\b0\f0 Student Project Report\par
+\pard\qc\b0\f0 \par
+
+\pard\b\f0 1. Introduction\par
+\pard\b0\f1
+Speech recognition is one of the most practical areas of artificial intelligence because it allows computers to understand spoken language and convert it into text. This technology is widely used in virtual assistants, automated customer support systems, transcription tools, educational platforms, accessibility software, and smart devices. For this mini project in CSC 309, I built a speech recognition web application that accepts spoken audio from a user and returns a written transcript. The main goal of the project was to demonstrate how artificial intelligence can be combined with a web interface to solve a real-world problem in a simple and understandable way.\par
+\par
+The project was designed as a browser-based application so that it would be easy to test and present. A user can either record speech directly from the browser using a microphone or upload an existing audio file. The application then sends the audio to a backend server built with FastAPI, where the Whisper speech recognition model processes the audio and generates a transcription. The result is displayed back on the web page. In addition to transcription, the project also includes MFCC feature extraction, which is useful in explaining some of the signal-processing concepts behind speech analysis.\par
+\par
+This project is relevant to CSC 309 because it combines core ideas from artificial intelligence, machine learning, signal processing, and software engineering. It also demonstrates how an AI model can be integrated into a real application rather than being used only in theory. The final system is simple enough to be demonstrated in class, but meaningful enough to show a complete AI workflow from user input to model inference and output.\par
+\par
+\b 2. About the Project\par
+\pard\b0\f1
+The title of the project is \b Speech Recognition Web Application Using FastAPI and Whisper\b0 . The application was developed using Python on the backend and standard web technologies on the frontend. The backend framework used is FastAPI, which makes it easy to define API endpoints and handle file uploads. The frontend was built with HTML, CSS, and JavaScript to create a simple user interface where a user can record audio, upload files, and view the resulting transcript.\par
+\par
+The main AI component of the project is OpenAI Whisper. Whisper is a speech recognition model that can transcribe audio into text. In this project, the \b tiny\b0  version of Whisper was used because it is lightweight and fast enough for a classroom demonstration. Although larger Whisper models can provide better accuracy, the tiny model is a good compromise between speed and performance on a local machine.\par
+\par
+The application also uses Librosa for extracting MFCC features from audio. MFCC, which stands for Mel-Frequency Cepstral Coefficients, is a popular representation of speech used in many speech processing tasks. Including MFCC extraction in the project adds academic value because it shows that the application is not only using a prebuilt model, but also includes a feature-engineering component that can be explained during a presentation or report defense.\par
+\par
+The major files in the project are organized as follows. The \b app.py\b0  file contains the FastAPI application and defines the routes used by the system. The \b frontend/index.html\b0  file contains the web interface presented to the user. The \b model/whisper_model.py\b0  file loads the Whisper model and performs transcription. The \b utils/feature_extraction.py\b0  file extracts MFCC features from uploaded audio. There is also an \b audio/record_audio.py\b0  file that can record audio directly from Python for testing. This structure makes the project easier to understand and maintain.\par
+\par
+\b 3. Project Objectives\par
+\pard\b0\f1
+The major objectives of this project were:\par
+\par
+1. To build a simple speech recognition application that can transcribe spoken audio into text.\par
+2. To demonstrate how an AI model can be connected to a web backend and frontend.\par
+3. To provide a user-friendly browser interface for recording and uploading audio.\par
+4. To show how audio features such as MFCC can be extracted for academic explanation.\par
+5. To create a mini project that is practical, presentable, and relevant to real-world AI use cases.\par
+\par
+\b 4. How the Project Works\par
+\pard\b0\f1
+The operation of the project can be explained as a pipeline. First, the user interacts with the browser interface. The frontend contains buttons for recording speech from the microphone and for selecting an existing audio file from the computer. When the user records or uploads audio, the frontend sends that file to the FastAPI backend using an HTTP POST request.\par
+\par
+Once the backend receives the file, it saves the audio in the local audio directory. After saving the file, the backend passes the file path to the Whisper transcription function. The Whisper model reads the audio, performs speech recognition, and returns the transcribed text. The backend then packages that result in JSON format and sends it back to the frontend. Finally, the browser displays the transcript inside the transcript panel on the web page.\par
+\par
+The project also provides another route for feature extraction. When an audio file is sent to the \b /extract-features/\b0  endpoint, the backend uses Librosa to compute MFCC values from the file. These values are returned as JSON data. This part of the project can be used to explain how audio signals can be transformed into feature vectors before being used in speech or sound classification tasks.\par
+\par
+The simplified process is as follows:\par
+\par
+1. User records or uploads audio from the browser.\par
+2. Frontend sends the audio to the backend.\par
+3. Backend stores the file temporarily.\par
+4. Whisper transcribes the audio to text.\par
+5. Backend returns the transcription result.\par
+6. Frontend displays the transcript to the user.\par
+\par
+This workflow demonstrates a full AI application pipeline involving input collection, preprocessing, model inference, and user-facing output.\par
+\par
+\b 5. Tools and Technologies Used\par
+\pard\b0\f1
+Several technologies were combined to complete this project successfully. Python was used as the main programming language because of its strong support for artificial intelligence and backend development. FastAPI was used to create the backend service because it is lightweight, fast, and well suited for file upload APIs. Uvicorn was used as the server to run the FastAPI application.\par
+\par
+Whisper was used as the speech recognition engine. It is the core AI model responsible for converting audio input into text output. Librosa was used for signal-processing functions, especially MFCC extraction. SoundDevice and SciPy were used in the recording script to capture microphone input and save it as a WAV file. On the frontend, HTML, CSS, and JavaScript were used to create the interactive web interface. Finally, FFmpeg was required so that Whisper could decode various audio formats such as WAV, MP3, OGG, and WebM.\par
+\par
+Git and GitHub were also used for version control and project hosting. This makes it easier to share the project, track changes, and attach a public repository link for assessment.\par
+\par
+\b 6. Significance of the Project\par
+\pard\b0\f1
+This project is significant in several ways. First, it addresses a real practical problem: converting speech into written text. Speech recognition is useful in many modern applications, including voice assistants, digital note taking, accessibility tools for people with disabilities, automated transcription services, and smart home systems. By building a simple working version of such a system, this project demonstrates how AI can be used to solve a common problem that people face in daily life.\par
+\par
+Second, the project is important academically because it connects theory with implementation. In many AI courses, students learn about machine learning models and signal processing concepts at a theoretical level. This project shows how those ideas can be applied to a working system. The inclusion of MFCC extraction is especially useful for explaining speech preprocessing concepts during assessment or presentation.\par
+\par
+Third, the project is significant because it demonstrates full-stack integration. It is not only an AI model running in isolation. Instead, it is an end-to-end system where a user provides input through a frontend, the backend handles the data, the model performs inference, and the result is shown in a clean interface. This makes the project more complete and more valuable as a mini project submission.\par
+\par
+Fourth, the project is easy to demonstrate physically if needed. Since it runs in the browser, it can be shown live by speaking into a microphone and receiving a transcript immediately. This makes it suitable for office presentation or in-person explanation if the lecturer wants to see how it works directly.\par
+\par
+\b 7. Challenges Encountered and Solutions\par
+\pard\b0\f1
+A few challenges were encountered during development and testing. One issue was audio decoding. Whisper depends on FFmpeg to process many audio formats, and the application initially failed to transcribe when FFmpeg was not available. This problem was solved by installing FFmpeg and making sure the backend could locate it properly.\par
+\par
+Another issue was browser-generated audio formats. Audio recorded in the browser may not always be in WAV format even when labeled that way. To make the system more practical, the upload interface was adjusted to accept a wider range of audio formats, and FFmpeg was used to handle the decoding.\par
+\par
+There was also a frontend display issue where long transcripts extended outside the visible display area. This was fixed by updating the transcript section styling so that long text wraps correctly and becomes scrollable when necessary. That change improved the quality of the user experience during demonstrations.\par
+\par
+A final challenge involved publishing the project to GitHub due to authentication and credential issues. This was resolved by clearing the cached GitHub credentials and authenticating with the correct account so the repository could be updated successfully.\par
+\par
+\b 8. Limitations\par
+\pard\b0\f1
+Although the project works well for a mini project demonstration, it has some limitations. The Whisper tiny model is fast, but it is not the most accurate option, especially in noisy environments or with unclear speech. The application also stores uploaded files locally instead of using a more advanced storage system. In addition, the system currently focuses only on transcription and feature extraction and does not include user authentication, transcript history, or export functionality.\par
+\par
+These limitations are acceptable for the scope of a CSC 309 mini project, but they also point to useful areas for future improvement.\par
+\par
+\b 9. Future Improvements\par
+\pard\b0\f1
+If the project were to be extended further, several improvements could be added. A larger Whisper model could be used for better transcription accuracy. Real-time streaming transcription could also be implemented so that text appears while the user is still speaking. The system could be connected to a database so that transcripts are saved for later review. A language selection feature could also be added, along with user authentication and transcript download functionality.\par
+\par
+These improvements would make the project more suitable for production use, but the current version is already sufficient as a working AI demonstration for classroom purposes.\par
+\par
+\b 10. Conclusion\par
+\pard\b0\f1
+In conclusion, this mini project successfully demonstrates how speech recognition can be implemented as a working web application using artificial intelligence tools. The combination of FastAPI, Whisper, Librosa, and a browser frontend made it possible to build a system that records or accepts speech input and returns a text transcription in a simple and clear way.\par
+\par
+The project is meaningful because it combines AI concepts, backend development, frontend interaction, and practical usability in a single application. It also provides a good example of how classroom knowledge in artificial intelligence can be turned into a real working system. For CSC 309, this project shows both technical understanding and practical application, which makes it suitable for submission, explanation, and physical presentation if requested.\par
+\par
+\b 11. Project Access Links and Files\par
+\pard\b0\f1
+GitHub repository link:\par
+https://github.com/maureenokolie440-oss/Speech_Recognition\par
+\par
+Important files in the repository:\par
+- README.md\par
+- app.py\par
+- frontend/index.html\par
+- model/whisper_model.py\par
+- utils/feature_extraction.py\par
+- audio/record_audio.py\par
+\par
+Local report file for Word submission:\par
+CSC309_Speech_Recognition_Report.rtf\par
+\par
+Submission email provided in the instruction:\par
+nwokorieeuphemia8@gmail.com\par
+\par
+If a physical demonstration is required, the project can be presented live by running the FastAPI server, opening the frontend page in a browser, recording audio, and showing the generated transcript in real time.\par
+}

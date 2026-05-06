@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Speech Recognition Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background: linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 2.5rem 2rem 2rem 2rem;
+            margin-top: 3rem;
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h2 {
+            color: #3730a3;
+            margin-bottom: 1.5rem;
+        }
+        button {
+            background: #6366f1;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0.7rem 1.5rem;
+            margin: 0.5rem 0.5rem 1rem 0;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:disabled {
+            background: #a5b4fc;
+            cursor: not-allowed;
+        }
+        audio {
+            margin: 1rem 0;
+            width: 100%;
+        }
+        form {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        input[type="file"] {
+            margin-right: 0.5rem;
+        }
+        h3 {
+            color: #6366f1;
+            margin-bottom: 0.5rem;
+        }
+        #transcript {
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 1rem;
+            min-height: 8rem;
+            max-height: 25rem;
+            overflow-y: auto;
+            width: 100%;
+            font-size: 1rem;
+            color: #22223b;
+            box-sizing: border-box;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Speech Recognition (CSC 309 Demo)</h2>
+        <div>
+            <button id="recordBtn">🎤 Record</button>
+            <button id="stopBtn" disabled>■ Stop</button>
+        </div>
+        <audio id="audioPlayback" controls></audio>
+        <form id="uploadForm">
+            <input type="file" id="audioFile" accept="audio/*">
+            <button type="submit">Transcribe</button>
+        </form>
+        <h3>Transcript:</h3>
+        <div id="spinner" style="display:none; margin-bottom:1rem;">
+            <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" stroke="#6366f1">
+                <g fill="none" fill-rule="evenodd">
+                    <g transform="translate(2 2)" stroke-width="3">
+                        <circle stroke-opacity=".2" cx="18" cy="18" r="18"/>
+                        <path d="M36 18c0-9.94-8.06-18-18-18">
+                            <animateTransform attributeName="transform" type="rotate" from="0 18 18" to="360 18 18" dur="1s" repeatCount="indefinite"/>
+                        </path>
+                    </g>
+                </g>
+            </svg>
+            <div style="color:#6366f1; font-size:1rem; margin-top:0.5rem;">Transcribing, please wait...</div>
+        </div>
+        <pre id="transcript"></pre>
+    </div>
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        const recordBtn = document.getElementById('recordBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const audioPlayback = document.getElementById('audioPlayback');
+        const transcript = document.getElementById('transcript');
+        const uploadForm = document.getElementById('uploadForm');
+        const audioFile = document.getElementById('audioFile');
+
+        recordBtn.onclick = async () => {
+            audioChunks = [];
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            mediaRecorder.start();
+            recordBtn.disabled = true;
+            stopBtn.disabled = false;
+            mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        };
+        stopBtn.onclick = () => {
+            mediaRecorder.stop();
+            recordBtn.disabled = false;
+            stopBtn.disabled = true;
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                audioPlayback.src = URL.createObjectURL(audioBlob);
+                // Auto-upload after recording
+                uploadAudio(audioBlob);
+            };
+        };
+        uploadForm.onsubmit = async (e) => {
+            e.preventDefault();
+            if (audioFile.files.length === 0) return;
+            uploadAudio(audioFile.files[0]);
+        };
+        async function uploadAudio(blob) {
+            const formData = new FormData();
+            formData.append('file', blob, 'audio.wav');
+            transcript.textContent = '';
+            document.getElementById('spinner').style.display = 'block';
+            let timeoutId = setTimeout(() => {
+                document.getElementById('spinner').querySelector('div').textContent = 'Still working... Large files or slow computers may take up to a minute.';
+            }, 10000); // 10 seconds
+            try {
+                const res = await fetch('/transcribe/', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                transcript.textContent = data.transcript ?? data.error ?? 'Unknown error';
+            } catch (e) {
+                transcript.textContent = 'Error during transcription.';
+            } finally {
+                clearTimeout(timeoutId);
+                document.getElementById('spinner').style.display = 'none';
+                document.getElementById('spinner').querySelector('div').textContent = 'Transcribing, please wait...';
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+fastapi
+uvicorn
+openai-whisper
+librosa
+sounddevice
+python-multipart
